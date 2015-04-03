@@ -39,9 +39,9 @@ def split_main():
         test data, test targets)
     '''
     
-    UM = loadmat('um_data')
-    UMM = loadmat('umm_data')
-    UU = loadmat('uu_data')
+    UM = loadmat('data/um_data.mat')
+    UMM = loadmat('data/umm_data.mat')
+    UU = loadmat('data/uu_data.mat')
     num_imgs_um = UM['feature_vector'].shape[1]
     num_imgs_umm = UMM['feature_vector'].shape[1]
     num_imgs_uu = UU['feature_vector'].shape[1]
