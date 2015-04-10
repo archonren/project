@@ -1,7 +1,9 @@
 __author__ = 'Guanhua, Joms'
-from numpy import exp, dot, array, shape, sum
+from numpy import array, shape, sum, exp, dot, int8, zeros
 from scipy.io import loadmat
-import argparse
+import argparse, pickle, os
+import matplotlib.pyplot as plt
+
 parser = argparse.ArgumentParser()
 parser.add_argument('train_path', help='Path to training database')
 arguments = parser.parse_args()
@@ -11,15 +13,8 @@ roaddata = loadmat(arguments.train_path)
 class ProbNeuralNetwork(object):
     def __init__(self, roaddata):
         self._training_data = roaddata['training_data']
-        self._dev_data = roaddata['dev_data']
-        self._test_data = roaddata['test_data']
         self._training_target = roaddata['training_target']
-        self._dev_target = roaddata['dev_target']
-        self._test_target = roaddata['test_target']
-        self._feature_dim = roaddata['feature_dim']
         self._training_dim = roaddata['training_dim']
-        self._dev_dim = roaddata['dev_dim']
-        self._test_dim = roaddata['test_dim']
         road_data = []
         non_road_data = []
         for i in range(self._training_dim):
@@ -46,38 +41,31 @@ class ProbNeuralNetwork(object):
     def activation(self, new_point, data, smoothing):
         return sum(exp((dot(new_point, data)-1)/(smoothing**2))/self._training_dim)
 
+
+def computation(input_fldr, file_heading, smoothing):
+    path = os.path.join(input_fldr, "%s_final_data.mat" % file_heading)
+    data_mat = loadmat(path)
+    for i in range(data_mat['total_pic']):
+        data = data_mat['feature_vector'][0][i]
+        pkl_path = os.path.join(input_fldr, '%s/' % file_heading, "%s_%06d.pkl" % (file_heading, i))
+        with open(pkl_path, 'rb') as input:
+            label_join = pickle.load(input)
+        target = zeros(data_mat['dim'][i])
+        result = []
+        for j in range(shape(data)[0]):
+            result.append(prob_nn.predict(data[j], smoothing))
+        for key, val in label_join.items():
+            if result[val] == 1:
+                target[key[0]][key[1]] = (130, 0, 0)
+            else:
+                target[key[0]][key[1]] = (0, 0, 130)
+        target = target.astype(int8)
+        img_path = os.path.join(input_fldr, '%s/' % file_heading, "%s_%06d_predict.png" % (file_heading, i))
+        plt.imshow(target)
+        plt.savefig(img_path)
+
+
 prob_nn = ProbNeuralNetwork(roaddata)
-acc = 0.0
-road_acc = 0.0
-nonroad_acc = 0.0
-road_num = 0
-nonroad_num = 0
-list_non = []
-list_road = []
-res = 0.0
-# smoothing value is critical
-smoothing = 2.9
-for i in range(roaddata['test_dim']):
-    result = prob_nn.predict(roaddata['test_data'][i], smoothing)
-    if roaddata['test_target'][i] == 1:
-        road_num += 1
-    else:
-        nonroad_num += 1
-    if result == roaddata['test_target'][i]:
-        acc += 1
-        if roaddata['test_target'][i] == 1:
-            road_acc += 1
-        else:
-            nonroad_acc += 1
-
-
-acc = acc/roaddata['test_dim']*100
-acc = acc[0][0].item()
-road_acc = road_acc/road_num*100
-nonroad_acc = nonroad_acc/nonroad_num*100
-avg_acc = (nonroad_acc+road_acc)/2
-print('smoothing value is', smoothing)
-print('overall acc is %.2f' % acc)
-print('acc for road is %.2f' % road_acc)
-print('acc for non road is %.2f' % nonroad_acc)
-print('avg acc is %.2f ' % avg_acc)
+computation('c:/data_road/testing/', 'um', 2.9)  # smoothing value is critical
+computation('c:/data_road/testing/', 'umm', 2.9)  # takes about 7 min to process
+computation('c:/data_road/testing/', 'uu', 2.9)

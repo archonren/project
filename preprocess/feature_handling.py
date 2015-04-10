@@ -21,12 +21,3 @@ def superpixel_target(target, group_number):
         else:
             target[x] = 0
     return target
-
-
-def unsample(target, label_dict):
-    png = zeros((375, 1242, 3), dtype="uint8")
-    for x in ndindex(png.shape[0], png.shape[1]):
-        if target[label_dict[x]] != 1:
-            png[x] = [0, 0, 130]
-            print(type(png[x][0]))
-    return png

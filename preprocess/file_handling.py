@@ -21,12 +21,12 @@ def label(filepath, height, width):
             data_label.append(unpack("i", d))
     label_file.close()
     data_label = reshape(data_label, (height, width))
-    #create a dict for a quick check of labels
+    # create a dict for a quick check of labels
     label_dict = {}
     for x in ndindex((height, width)):
         label_dict[x] = data_label[x[0]][x[1]]
 
-    return data_label,label_dict
+    return data_label, label_dict
 
 
 def gt(filepath):

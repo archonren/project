@@ -6,11 +6,10 @@ from numpy import shape, concatenate
 from scipy import ndimage
 
 
-def single_pic_feature_computation(path_png, path_gt, path_dat):
+def single_pic_feature_computation_without_target(path_png, path_dat):
     # load data
     png = ndimage.imread(path_png)
     data_label, label_dict = label(path_dat, shape(png)[0], shape(png)[1])
-    target = gt(path_gt)
     group_number = max(data_label.ravel())+1
 
     # calculate features
@@ -20,10 +19,4 @@ def single_pic_feature_computation(path_png, path_gt, path_dat):
     hsv = to_hsv(png)
     feature = concatenate((png, nrg, ocs, hsv, lab), axis=2)
     feature = avg(feature, label_dict, group_number)
-
-
-    # calculate superpixel target
-    target = avg(target, label_dict, group_number)
-    target = superpixel_target(target, group_number)
-
-    return feature, target, shape(png)
+    return feature, label_dict, shape(png)
