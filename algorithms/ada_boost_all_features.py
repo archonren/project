@@ -18,7 +18,7 @@ def normalize_data(x):
     return scaler 
 
 
-def adaboost(D):
+def adaboost(D, num_of_files):
       
              
     feature = D['feature_vector']
@@ -31,7 +31,7 @@ def adaboost(D):
     #print feature[50]
 
 
-    um_targets = vstack((((target[:,i])[0]) for i in range(95))) #[0:385]
+    um_targets = vstack((((target[:,i])[0]) for i in range(num_of_files))) #[0:385]
 
     print um_targets.shape
 
@@ -90,8 +90,8 @@ UMM = loadmat("C:\Users\Joms\Desktop\umm\umm_all_data.mat")
 UU = loadmat("C:\Users\Joms\Desktop\uu\uu_all_data.mat") 
 
 print "UM"
-adaboost(UM)
+adaboost(UM, 95)
 print "UMM"
-adaboost(UMM)
+adaboost(UMM, 96)
 print "UU"
-adaboost(UU)
+adaboost(UU, 98)
