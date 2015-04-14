@@ -19,7 +19,7 @@ def single_pic_feature_computation(path_png, path_gt, path_dat):
     ocs = OCS(png)
     hsv = to_hsv(png)
     feature = concatenate((png, nrg, ocs, hsv, lab), axis=2)
-    feature = avg(feature, label_dict, group_number)
+    feature = avg_feature(feature, label_dict, group_number)
 
 
     # calculate superpixel target
