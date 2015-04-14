@@ -24,9 +24,9 @@ def pic_package_to_mat(input_fldr, file_heading, number_of_file):
     dim = array(dim)
 
     # save to mat
-    feature_explanation = ["r", "g", "b", "nr", "ng", "o1", "o2", "h", "s", "v", "l", "a", "b"]
+    feature_explanation = ["r", "g", "b", "nr", "ng", "o1", "o2", "h", "s", "v", "l", "a", "b", "x", "y"]
     params_dict = {'feature_vector': feature, 'feature_explanation': feature_explanation, 'target': target,
-                   'feature_dim': [13], 'total_pic': [number_of_file], 'dim': dim}
+                   'feature_dim': [15], 'total_pic': [number_of_file], 'dim': dim}
     save_path = os.path.join(input_fldr, "%s_data" % file_heading)
     savemat(save_path, params_dict)
 
